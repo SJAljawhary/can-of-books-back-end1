@@ -117,7 +117,7 @@ function getFavouriteBook(req,res) {
   })
 }
 
-app.post('/books' , aadBookHandler);
+app.post('/addbook' , aadBookHandler);
 
 function aadBookHandler(req,res){
 
@@ -140,21 +140,23 @@ function aadBookHandler(req,res){
   }
   )}
 
-  app.delete('/books/:id', deleteBookHandler )
+  app.delete('/deletebook/:id', deleteBookHandler )
 
   function deleteBookHandler(req,res){
 
-   let id =req.params.id;
+   let index =Number(req.params.id);
    let userEmail = req.query.userEmail;
 
    userModel.find({email:userEmail},function(error,userData){
     if(error) {
         res.send('user not found')
-    } else { let newArray = userData[0].books.filter(value => {
+    } else { let newArray = userData[0].books.filter(book,idx => {
 
-      return value._id.toString() !== id
+      if (idx !== index){
+        return book
+      }
     })
-    userData[0] = newArray;
+    userData[0].books = newArray;
     userData[0].save();
     res.send(userData[0].books)
 
